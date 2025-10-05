@@ -125,6 +125,11 @@ How it works
 - Sends the prompt to your local server and returns a structured plan.
 - Supports `model` override in the request body, otherwise uses `OLLAMA_MODEL`.
 
+UI details
+- Uses UI library icons (`lucide-react`) across inputs and actions.
+- Displays the advisor response in a chat‑style bubble with an “Advisor” icon.
+- Submit button shows a send icon and a spinning loader during analysis.
+
 Example curl
 
 ```bash
