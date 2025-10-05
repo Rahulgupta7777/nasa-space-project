@@ -1,36 +1,112 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AresMatrix LEO
+
+AresMatrix LEO is a Next.js application for Low Earth Orbit (LEO) visualization, conjunction awareness, mission planning, and feasibility analysis. It combines CesiumJS for a 3D globe, lightweight orbital analytics, NASA GIBS imagery previews, and a private Feasibility Advisor powered by a local inference server.
+
+## Features
+
+- Dashboard: Interactive Cesium globe and situational awareness. Fetches a subset of active TLEs and computes close approaches.
+- Planner: LEO mission planner that suggests launch site, debris risk band, estimated lifetime, and mitigations.
+- Earth Observation Resources: Quick previews of GIBS imagery and links to Worldview and EarthExplorer.
+- Feasibility Advisor: Commercialization guidance based on mission parameters with partner ecosystem context; runs locally.
+- Business and About pages: Branding, offerings, and a curated Partner Ecosystem section.
+- Optional GitHub OAuth via NextAuth.
+
+## Tech Stack
+
+- Next.js 15, React 19, TypeScript 5
+- CesiumJS, Three.js, satellite.js
+- Tailwind CSS 4
+- NextAuth (GitHub provider)
+
+## Project Structure
+
+Key routes under `src/app`:
+
+- `/` — Home
+- `/dashboard` — Cesium dashboard
+- `/planner` — Mission planner UI
+- `/business` — Offerings and Partner Ecosystem
+- `/about` — Project overview
+- `/resources` — Resource hub
+  - `/resources/earth-observation` — EO previews and AOI tooling
+  - `/resources/data` — Data resources
+  - `/resources/debris` — Debris and mitigation
+- `/feasibility` — LEO Feasibility Advisor form
+
+APIs under `src/app/api`:
+
+- `/api/alerts` — TLE subset and close-approach calculation
+- `/api/tle` — Active TLE proxy (subset)
+- `/api/gibs` — NASA GIBS image proxy (WMTS/WMS preview)
+- `/api/planner` — Mission planning recommendations
+- `/api/feasibility` — Feasibility Advisor (local model)
+- `/api/auth/[...nextauth]` — GitHub OAuth
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies and run the dev server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Production build:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm run start
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Create `orbitguard/.env.local` as needed:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `OLLAMA_URL` — Local inference server URL (default `http://localhost:11434`)
+- `OLLAMA_MODEL` — Default model name (default `llama3`)
+- `NEXTAUTH_SECRET` — NextAuth secret
+- `GITHUB_ID` and `GITHUB_SECRET` — GitHub OAuth credentials
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Feasibility Advisor
 
-## Deploy on Vercel
+- Page: `src/app/feasibility/page.tsx`
+- Form component: `src/components/FeasibilityForm.tsx`
+- API: `src/app/api/feasibility/route.ts`
+- How it works:
+  - Collects mission inputs (purpose, budget, altitude, payload, timeline, risk tolerance)
+  - Builds a prompt including partner ecosystem examples (PNT, EO, ground, comms, launch, analytics)
+  - Calls the local inference server and returns a structured plan
+  - Supports `model` override in the request body; otherwise uses `OLLAMA_MODEL`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Quick test:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+curl -X POST http://localhost:3000/api/feasibility \
+  -H "Content-Type: application/json" \
+  -d '{
+    "purpose":"EO startup",
+    "budget":"25",
+    "altitude":"550",
+    "payload":"60",
+    "timeline":"18",
+    "riskTolerance":"Moderate",
+    "model":"llama3"
+  }'
+```
+
+## Cesium Assets
+
+- Static workers and assets are included under `public/cesium/`.
+- If you see a widget CSS warning (e.g., InfoBoxDescription.css), ensure widget CSS assets are present; functionality should remain normal.
+
+## Known Issues
+
+- Dashboard may log a non-blocking Cesium widget CSS error in dev; globe interaction works.
+- External APIs (CelesTrak, GIBS) can rate-limit or change output; the app includes minimal error handling suitable for demos.
+
+## Notes
+
+- This project uses a private, local inference server for the Feasibility Advisor; no data leaves your machine.
+- Partner examples on the Business page are illustrative; verify availability, licensing, and fit for your mission.
