@@ -21,7 +21,7 @@ export default function BusinessPage() {
     <div className="mx-auto max-w-6xl px-4 py-12">
       <h1 className="text-3xl font-bold">Business</h1>
       <p className="mt-4 text-slate-300 max-w-3xl">
-        AresMatrix LEO helps space operators visualize orbits, monitor conjunctions, and plan sustainable missions.
+        Spacia helps space operators visualize orbits, monitor conjunctions, and plan sustainable missions.
         Explore our offerings and get in touch to discuss a plan tailored to your operations.
       </p>
 
@@ -71,7 +71,7 @@ export default function BusinessPage() {
       <div className="mt-10 rounded-xl border border-slate-800/60 bg-[#0b0f14] p-8 text-center">
         <h2 className="text-xl font-semibold">Work With Us</h2>
         <p className="mt-2 text-slate-300">
-          Ready to explore AresMatrix LEO for your mission? We’d love to connect.
+          Ready to explore Spacia for your mission? We’d love to connect.
         </p>
         <div className="mt-6 flex justify-center gap-4">
           <a href="/dashboard" className="button-primary">View Dashboard</a>

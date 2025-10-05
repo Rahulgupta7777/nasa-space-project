@@ -1,4 +1,4 @@
-**AresMatrix LEO**
+**Spacia**
 
 Neon-dark Next.js 15 platform combining CesiumJS visualization, NASA GIBS imagery, and an AI‑powered Feasibility Advisor using a local Llama3 (Ollama) model.
 
@@ -185,11 +185,11 @@ curl -X POST http://localhost:3000/api/feasibility \
 
 ## 🪐 About
 
-AresMatrix LEO focuses on sustainability in the LEO economy: better visualization, safer planning, and grounded commercialization paths. The neon‑dark UI reinforces clarity without noise.
+Spacia focuses on sustainability in the LEO economy: better visualization, safer planning, and grounded commercialization paths. The neon‑dark UI reinforces clarity without noise.
 
 —
 
-Developed with ⚡ Next.js + Cesium + Llama3 © 2025 AresMatrix LEO Project
+Developed with ⚡ Next.js + Cesium + Llama3 © 2025 Spacia Project
 
 ## Use Cases
 

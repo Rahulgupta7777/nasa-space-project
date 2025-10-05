@@ -32,8 +32,9 @@ export default function FeasibilityForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.details || data?.error || "Request failed");
       setResult(data.result || "No response");
-    } catch (err: any) {
-      setError(String(err?.message || err));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      setError(message);
     } finally {
       setLoading(false);
     }

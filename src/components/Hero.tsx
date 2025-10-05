@@ -16,7 +16,7 @@ export default function Hero() {
   return (
     <section className="mx-auto max-w-6xl px-4 pt-20 pb-12 text-center sm:text-left">
       <h1 className={`text-4xl sm:text-6xl font-extrabold tracking-tight transition-all duration-700 ${enter}`}>
-        <span className="neon-text">AresMatrix LEO</span> · AI-Powered Space Traffic Control
+        <span className="neon-text">Spacia</span> · AI-Powered Space Traffic Control
       </h1>
       <p className={`mt-4 text-slate-300 max-w-2xl transition-all duration-700 delay-150 ${enter}`}>
         Real-time orbit visualization, live conjunction alerts, and mission-focused UX crafted for space operations.

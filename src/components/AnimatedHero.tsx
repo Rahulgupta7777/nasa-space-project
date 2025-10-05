@@ -32,7 +32,7 @@ export default function AnimatedHero() {
         <div className="hero-glow -top-10 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gradient-to-r from-cyan-400/20 via-fuchsia-400/20 to-pink-400/20 blur-3xl" />
       </div>
       <h1 className="hero-title relative z-10 text-center sm:text-left text-4xl sm:text-6xl font-extrabold tracking-tight">
-        <span className="neon-text">AresMatrix LEO</span> · Commercializing LEO Responsibly
+        <span className="neon-text">Spacia</span> · Commercializing LEO Responsibly
       </h1>
       <p className="hero-subtitle relative z-10 mt-4 text-center sm:text-left text-slate-300 max-w-2xl">
         NASA‑grade orbit visualization, live conjunction intelligence, and a mission‑ready UX to support a sustainable LEO economy.

@@ -1,9 +1,9 @@
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
-      <h1 className="text-3xl font-bold">About AresMatrix LEO</h1>
+      <h1 className="text-3xl font-bold">About Spacia</h1>
       <p className="mt-4 text-slate-300 max-w-3xl">
-        AresMatrix LEO is a SaaS platform that acts as a guard dog for space traffic
+        Spacia is a SaaS platform that acts as a guard dog for space traffic
         in Low Earth Orbit. It tracks satellites, predicts potential collisions, and
         suggests avoidance maneuvers in real time to safeguard the growing space economy.
       </p>

@@ -1,11 +1,9 @@
 "use client";
 import { useMemo, useRef, useEffect } from "react";
-import Link from "next/link";
 import { animate, stagger, cubicBezier } from "animejs";
 
 export default function WorldviewShowcase() {
   const dateStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
-  const base = "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/wmts.cgi";
   const layers = [
     { name: "MODIS TrueColor", id: "MODIS_Terra_CorrectedReflectance_TrueColor" },
     { name: "VIIRS TrueColor", id: "VIIRS_SNPP_CorrectedReflectance_TrueColor" },

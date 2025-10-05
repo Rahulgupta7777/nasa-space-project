@@ -19,19 +19,20 @@ export async function GET() {
     const now = new Date();
     const gmst = satellite.gstime(now);
     const recs = subset.map((s) => ({ name: s.name, rec: satellite.twoline2satrec(s.line1, s.line2) }));
+    type Vec3 = { x: number; y: number; z: number };
     const ecf = recs
       .map((r) => {
         const pv = satellite.propagate(r.rec, now);
-        if (!pv || !pv.position) return { name: r.name, ecf: null } as { name: string; ecf: any };
-        const e = satellite.eciToEcf(pv.position, gmst);
-        return { name: r.name, ecf: e } as { name: string; ecf: any };
+        if (!pv || !pv.position) return { name: r.name, ecf: null } as { name: string; ecf: Vec3 | null };
+        const e = satellite.eciToEcf(pv.position, gmst) as Vec3;
+        return { name: r.name, ecf: e } as { name: string; ecf: Vec3 };
       })
       .filter((e) => e.ecf);
 
     const alerts: { a: string; b: string; distance_km: number }[] = [];
     for (let i = 0; i < ecf.length; i++) {
       for (let j = i + 1; j < ecf.length; j++) {
-        const A = ecf[i].ecf as any; const B = ecf[j].ecf as any;
+        const A = ecf[i].ecf as Vec3; const B = ecf[j].ecf as Vec3;
         const dx = A.x - B.x, dy = A.y - B.y, dz = A.z - B.z;
         const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
         if (d < 10) {

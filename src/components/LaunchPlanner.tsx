@@ -48,8 +48,9 @@ export default function LaunchPlanner() {
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
       const data = (await res.json()) as PlannerResponse;
       setResult(data);
-    } catch (err: any) {
-      setError(err?.message ?? "Unknown error");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      setError(message);
     } finally {
       setLoading(false);
     }

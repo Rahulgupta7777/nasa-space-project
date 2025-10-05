@@ -85,7 +85,7 @@ export default function EarthObservationPage() {
         <div className="text-lg font-semibold text-slate-100">NASA Worldview</div>
         <p className="mt-2 text-sm text-slate-400">
           Use NASA Worldview for interactive browsing of global, full-resolution satellite imagery layers.
-          In AresMatrix LEO, toggle GIBS layers on the dashboard globe to mirror Worldview content.
+          In Spacia, toggle GIBS layers on the dashboard globe to mirror Worldview content.
         </p>
         <a href="https://worldview.earthdata.nasa.gov/" target="_blank" className="mt-3 inline-block rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Open Worldview</a>
       </div>

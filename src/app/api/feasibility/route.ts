@@ -70,9 +70,10 @@ Return:
     const data = await resp.json();
     const result: string = data.response ?? data.output ?? "";
     return NextResponse.json({ result });
-  } catch (e: any) {
+  } catch (e: unknown) {
+    const details = e instanceof Error ? e.message : String(e);
     return NextResponse.json(
-      { error: "Bad request or LLM error", details: String(e?.message || e) },
+      { error: "Bad request or LLM error", details },
       { status: 500 }
     );
   }

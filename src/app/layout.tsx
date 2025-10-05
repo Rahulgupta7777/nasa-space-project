@@ -17,9 +17,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AresMatrix LEO | AI-Powered Space Traffic Control",
+  title: "Spacia | AI-Powered Space Traffic Control",
   description:
-    "AresMatrix LEO safeguards LEO with AI-driven tracking, collision prediction, and avoidance suggestions.",
+    "Spacia safeguards LEO with AI-driven tracking, collision prediction, and avoidance suggestions.",
 };
 
 export default function RootLayout({

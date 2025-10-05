@@ -1,17 +1,19 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import type * as CesiumNS from "cesium";
 
 export default function CesiumViewer() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  const [layer, setLayer] = useState<
-    "MODIS_Terra_CorrectedReflectance_TrueColor" |
-    "VIIRS_SNPP_CorrectedReflectance_TrueColor" |
-    "MODIS_Terra_CorrectedReflectance_Bands367"
-  >("MODIS_Terra_CorrectedReflectance_TrueColor");
-  const viewerRef = useRef<any>(null);
-  const cesiumRef = useRef<any>(null);
+  const [layer, setLayer] = useState<LayerId>("MODIS_Terra_CorrectedReflectance_TrueColor");
+  type LayerId =
+    | "MODIS_Terra_CorrectedReflectance_TrueColor"
+    | "VIIRS_SNPP_CorrectedReflectance_TrueColor"
+    | "MODIS_Terra_CorrectedReflectance_Bands367";
+
+  const viewerRef = useRef<CesiumNS.Viewer | null>(null);
+  const cesiumRef = useRef<typeof CesiumNS | null>(null);
   const [satCount, setSatCount] = useState(5);
 
   // Render a few sample orbits and current positions
@@ -25,10 +27,10 @@ export default function CesiumViewer() {
       const sats = (json.satellites || []).slice(0, count);
       const satellite = await import("satellite.js");
       const now = new Date();
-      const positionsBySat: Array<{ name: string; positions: any[]; current?: any }> = [];
+      const positionsBySat: Array<{ name: string; positions: CesiumNS.Cartesian3[]; current?: { lon: number; lat: number; alt: number } }> = [];
       for (const s of sats) {
         const satrec = satellite.twoline2satrec(s.line1, s.line2);
-        const positions: any[] = [];
+        const positions: CesiumNS.Cartesian3[] = [];
         for (let t = 0; t <= 60; t += 2) {
           const when = new Date(now.getTime() + t * 60 * 1000);
           const pv = satellite.propagate(satrec, when);
@@ -69,20 +71,19 @@ export default function CesiumViewer() {
   };
 
   useEffect(() => {
-    let viewer: any;
-    let destroyed = false;
+    let viewer: CesiumNS.Viewer | null = null;
     (async () => {
-      const Cesium = await import("cesium");
+      const Cesium: typeof CesiumNS = await import("cesium");
       // Point Cesium to static assets served from public/cesium
-      (window as any).CESIUM_BASE_URL = "/cesium";
+      (window as unknown as { CESIUM_BASE_URL?: string }).CESIUM_BASE_URL = "/cesium";
       // Configure Cesium Ion token if available (NEXT_PUBLIC_CESIUM_ION_TOKEN)
       try {
         const token = process.env.NEXT_PUBLIC_CESIUM_ION_TOKEN as string | undefined;
         if (token && token.length > 0) {
-          (Cesium as any).Ion.defaultAccessToken = token;
+          Cesium.Ion.defaultAccessToken = token;
         } else {
           // Explicitly clear default token to suppress Cesium Ion warning overlay
-          (Cesium as any).Ion.defaultAccessToken = "";
+          Cesium.Ion.defaultAccessToken = "";
         }
       } catch {}
       cesiumRef.current = Cesium;
@@ -116,7 +117,7 @@ export default function CesiumViewer() {
 
       // Replace base imagery with Cesium World Imagery (neutral, data-centric)
       try {
-        let baseProvider: any = null;
+        let baseProvider: CesiumNS.ImageryProvider | null = null;
         const envToken = process.env.NEXT_PUBLIC_CESIUM_ION_TOKEN as string | undefined;
         if (envToken && envToken.length > 0) {
           baseProvider = await Cesium.createWorldImageryAsync({
@@ -136,16 +137,18 @@ export default function CesiumViewer() {
       }
 
       // NASA GIBS overlay using WMS world snapshot (reliable preview)
-      const addGibs = (layerName: string) => {
+      const addGibs = (layerName: LayerId) => {
         try {
+          const v = viewer;
+          if (!v) return;
           const dateStr = new Date().toISOString().slice(0, 10);
           const src = `/api/gibs?wms=1&layer=${encodeURIComponent(layerName)}&time=${encodeURIComponent(dateStr)}&width=2048&height=1024`;
           const provider = new Cesium.SingleTileImageryProvider({
             url: src,
             rectangle: Cesium.Rectangle.fromDegrees(-180, -90, 180, 90),
           });
-          viewer.imageryLayers.addImageryProvider(provider);
-          viewer.scene.requestRender?.();
+          v.imageryLayers.addImageryProvider(provider);
+          v.scene.requestRender?.();
         } catch (e) {
           console.warn("GIBS WMS overlay failed to load:", e);
         }
@@ -157,9 +160,10 @@ export default function CesiumViewer() {
     })();
 
     return () => {
-      destroyed = true;
       try {
-        viewer && viewer.destroy && viewer.destroy();
+        if (viewer && typeof viewer.destroy === "function") {
+          viewer.destroy();
+        }
       } catch {}
     };
   }, []);
@@ -212,14 +216,14 @@ export default function CesiumViewer() {
         <div className="mb-1">NASA GIBS layer</div>
         <div className="flex flex-wrap gap-2">
           {[
-            { name: "MODIS TrueColor", id: "MODIS_Terra_CorrectedReflectance_TrueColor" },
-            { name: "VIIRS TrueColor", id: "VIIRS_SNPP_CorrectedReflectance_TrueColor" },
-            { name: "MODIS Bands 3-6-7", id: "MODIS_Terra_CorrectedReflectance_Bands367" },
+            { name: "MODIS TrueColor", id: "MODIS_Terra_CorrectedReflectance_TrueColor" as LayerId },
+            { name: "VIIRS TrueColor", id: "VIIRS_SNPP_CorrectedReflectance_TrueColor" as LayerId },
+            { name: "MODIS Bands 3-6-7", id: "MODIS_Terra_CorrectedReflectance_Bands367" as LayerId },
           ].map((opt) => (
             <button
               key={opt.id}
               onClick={() => {
-                setLayer(opt.id as any);
+                setLayer(opt.id);
                 try {
                   const v = viewerRef.current;
                   if (!v) return;
