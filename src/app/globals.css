@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #030712; /* near-black */
+  --foreground: #e5e7eb; /* gray-200 */
 }
 
 @theme inline {
@@ -10,17 +10,97 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-space: #010409;
+  --color-space-foreground: #cbd5e1;
+  --color-accent: #a3a3a3; /* neutral gray accent */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #030712;
+    --foreground: #e5e7eb;
   }
+}
+
+/* Explicit light theme (via data-theme="light") */
+:root[data-theme="light"] {
+  --background: #f8fafc; /* slate-50 */
+  --foreground: #0f172a; /* slate-900 */
+}
+
+/* Base */
+html, body {
+  height: 100%;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Star-field background */
+.bg-space {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.35) 1px, transparent 0),
+    radial-gradient(1px 1px at 80px 120px, rgba(255,255,255,0.2) 1px, transparent 0),
+    radial-gradient(1px 1px at 200px 50px, rgba(255,255,255,0.25) 1px, transparent 0),
+    radial-gradient(1px 1px at 320px 220px, rgba(255,255,255,0.3) 1px, transparent 0),
+    radial-gradient(1px 1px at 500px 180px, rgba(255,255,255,0.2) 1px, transparent 0);
+  background-size: 600px 600px;
+}
+
+.text-space-foreground {
+  color: var(--foreground);
+}
+
+.accent-gradient {
+  color: var(--color-accent);
+}
+
+.glass-panel {
+  background: rgba(2, 6, 23, 0.6);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+/* Utility: soft card background variant */
+.glass-panel.soft {
+  background: rgba(2, 6, 23, 0.8);
+  backdrop-filter: blur(6px);
+}
+
+/* Light theme adjustments */
+:root[data-theme="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(2, 6, 23, 0.12);
+}
+:root[data-theme="light"] .glass-panel.soft {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* Neon gradient title and CTA styles */
+.neon-text {
+  background-image: linear-gradient(90deg, #06b6d4, #22d3ee, #a78bfa, #f472b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 24px rgba(56, 189, 248, 0.25);
+}
+
+.button-primary {
+  @apply px-5 py-2 rounded-md font-semibold;
+  background: linear-gradient(90deg, rgba(56,189,248,0.85), rgba(147,51,234,0.85));
+  color: #010409;
+}
+.button-primary:hover {
+  filter: brightness(1.08);
+}
+
+.button-secondary {
+  @apply px-5 py-2 rounded-md border font-medium;
+  border-color: rgba(148,163,184,0.4);
+  color: var(--foreground);
+  background: rgba(2, 6, 23, 0.4);
+}
+.button-secondary:hover { background: rgba(2, 6, 23, 0.6); }
