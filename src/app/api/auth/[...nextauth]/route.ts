@@ -21,9 +21,7 @@ const authOptions: NextAuthOptions = {
       clientSecret: process.env.GITHUB_SECRET ?? "",
     }),
   ],
-
   session: { strategy: "jwt" },
-
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
@@ -32,7 +30,6 @@ const authOptions: NextAuthOptions = {
       }
       return token;
     },
-
     async session({ session, token }) {
       if (token) {
         session.provider = token.provider as string | undefined;
@@ -41,10 +38,8 @@ const authOptions: NextAuthOptions = {
       return session;
     },
   },
-
   debug: process.env.NODE_ENV !== "production",
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };
