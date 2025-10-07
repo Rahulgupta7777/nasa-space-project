@@ -1,25 +1,38 @@
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GithubProvider from "next-auth/providers/github";
+
 
 declare module "next-auth" {
   interface Session {
     provider?: string;
     accessToken?: string;
   }
+
+  interface JWT {
+    provider?: string;
+    accessToken?: string;
+  }
 }
 
-const handler = NextAuth({
+
+const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     GithubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
+      clientId: process.env.GITHUB_ID ?? "",
+      clientSecret: process.env.GITHUB_SECRET ?? "",
+      authorization: {
+        params: {
+          scope: "read:user user:email",
+        },
+      },
     }),
   ],
-  session: {
-    strategy: "jwt",
-  },
+
+  session: { strategy: "jwt" },
+
   callbacks: {
+
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
@@ -27,17 +40,21 @@ const handler = NextAuth({
       }
       return token;
     },
+
+
     async session({ session, token }) {
-      session.provider =
-        typeof token.provider === "string" ? token.provider : undefined;
-      session.accessToken =
-        typeof token.accessToken === "string" ? token.accessToken : undefined;
+      if (token) {
+        session.provider = token.provider as string | undefined;
+        session.accessToken = token.accessToken as string | undefined;
+      }
       return session;
     },
   },
-  debug: process.env.NODE_ENV === "development",
-});
+
+
+  debug: process.env.NODE_ENV !== "production",
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
-
